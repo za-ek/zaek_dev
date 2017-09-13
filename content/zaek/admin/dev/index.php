@@ -1,6 +1,6 @@
 <?php
-$this->template()->addCss('\jquery.tree_view.css');
-$this->template()->addJs('\jquery.tree_view.js');
+$this->template()->addCss('\jQuery.fileTree.css');
+$this->template()->addJs('\jQuery.fileTree.js');
 
 $root_dir = $this->conf()->get('repo', 'dir');
 ?>
@@ -36,9 +36,11 @@ $root_dir = $this->conf()->get('repo', 'dir');
                 </div>
                 <script>
                     $(function() {
-                        $('#tag_list').on('z_list:selected', function(e,el,params) {
-                            $('#tag_overlay').show(100);
-                            $.post('action.set_tag.php', {path:$('#file_path').text(),module:el.id}, function(e) {
+                        $('#tag_list li').on('click', function(e) {
+                            $.post('/zaek/admin/dev/set_tag.php', {
+                                path:$('#file_path').text(),
+                                module:$(this).attr('data-zlist-id')
+                            }, function(e) {
                                 $('#tag_overlay').hide();
                             });
                         });
@@ -121,7 +123,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
         <script type="text/javascript">
             $('#make_new_version').click(function() {
                 $('#btn_overlay').show();
-                $.post ( 'action.no_tag.php', function(d) {
+                $.post('/zaek/admin/dev/no_tag.php', {zAjax:true, zAjaxType:'json'}, function(d) {
                     d = JSON.parse(d);
                     if ( d.length ) {
                         $('#file_not_assigned').html('');
@@ -130,7 +132,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
                         });
                         $('#btn_overlay').hide();
                     } else {
-                        $.post('action.prepare_list.php', function(d) {
+                        $.post('/zaek/admin/dev/prepare_list.php', {zAjax:true, zAjaxType:'json'},function(d) {
                             try {
                                 d = JSON.parse(d);
                                 $('#version_light tbody tr').each(function() {
@@ -172,7 +174,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
                         $('#tag_list_2').on('z_list:selected', function(e,el,params) {
                             $('#file_tree_by_tag').fileTree({
                                 root: '/',
-                                script : 'action.tag_tree.php?tag=' + el.id
+                                script : '/zaek/admin/dev/tag_tree.php?tag=' + el.id
                             }, function(file, type) {
 
                             });
@@ -279,7 +281,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
     $(function() {
         $('#no_tag_refresh').click(function() {
             $(this).addClass('fa-spin');
-            $.post ( 'action.no_tag.php', function(d) {
+            $.post ( '/zaek/admin/dev/no_tag.php', {zAjax:true, zAjaxType:'json'},function(d) {
                 d = JSON.parse(d);
                 $('#file_not_assigned').html('');
                 if ( d.length ) {
@@ -293,12 +295,12 @@ $root_dir = $this->conf()->get('repo', 'dir');
         });
         $('#file_tree').fileTree({
             root: '/',
-            script : 'action.get_tree.php'
+            script : '/zaek/admin/dev/get_tree.php'
         }, function(file, type) {
             $('#tag_overlay').show();
             $('#file_path').text(file);
             $('#tag_list li.selected').removeClass('selected');
-            $.post('action.file_info.php', {path:file}, function(d) {
+            $.post('/zaek/admin/dev/file_info.php', {zAjax:true, zAjaxType:'json', path:file},function(d) {
                 $('#tag_overlay').hide();
                 if ( d ) {
                     $('#tag_list li[data-zlist-id="'+d+'"]').click();
@@ -307,7 +309,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
         });
         $('#version_light tbody tr button').click(function() {
             var tr = $(this).closest('tr');
-            $('#update_diff').load('action.show_change.php?module=' + tr.find('.code').text());
+            $('#update_diff').load('show_change.php?module=' + tr.find('.code').text());
             $('#update_module').val(tr.find('.code').text());
             $('#update_version').val(tr.find('.current_version input').val());
             return false;
@@ -322,7 +324,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
             };
             console.log(d);
             if ( d.msg != null ) {
-                $.post('/action.commit.php', d, function(e) {
+                $.post('/zaek/admin/dev/commit.php', d, function(e) {
                     alert(e);
                 });
             }

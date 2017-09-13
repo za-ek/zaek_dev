@@ -40,6 +40,9 @@ $directory_path_len = strlen($directory_path) - 1;
 
 $aFiles = parse_ini_file('assignment.ini.php', true);
 $aTags = parse_ini_file('tags.ini.php', true);
+if ( !isset($aTags['list']) ) {
+    $aTags['list'] = [];
+}
 $aNeedChange = array_fill_keys(array_keys($aTags['list']), array());
 
 foreach ( $aTags['list'] as $k => $v ) {

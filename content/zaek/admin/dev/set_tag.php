@@ -1,5 +1,24 @@
 <?php
-$this->template()->end();
+function get_ini_string($aConfig)
+{
+    $content = "";
+    foreach ($aConfig as $key => $value) {
+        $content .= "[" . $key . "]\n";
+        foreach ($value as $key2 => $elem2) {
+            if (is_array($elem2)) {
+                foreach ( $elem2 as $k => $v ) {
+                    $v = str_replace('"', '&quot;', $v);
+                    $content .= $key2 . "[{$k}]=\"{$v}\"" . PHP_EOL;
+                }
+            } else {
+                $elem2 = str_replace('"', '&quot;', $elem2);
+                $content .= $key2 . " = \"{$elem2}\"" . PHP_EOL;
+            }
+        }
+    }
+    return $content;
+}
+
 $aPath = @parse_ini_file('assignment.ini.php', 1);
 
 if ( is_dir( $_SERVER["DOCUMENT_ROOT"] . $_REQUEST['path'] ) ) {
@@ -24,5 +43,3 @@ if ( is_dir( $_SERVER["DOCUMENT_ROOT"] . $_REQUEST['path'] ) ) {
 }
 
 file_put_contents(__DIR__ . '/assignment.ini.php', ';<?php die(); ?>' . PHP_EOL . get_ini_string($aPath));
-
-die('');
