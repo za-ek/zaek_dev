@@ -309,7 +309,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
         });
         $('#version_light tbody tr button').click(function() {
             var tr = $(this).closest('tr');
-            $('#update_diff').load('show_change.php?module=' + tr.find('.code').text());
+            $('#update_diff').load('/zaek/admin/dev/show_change.php?module=' + tr.find('.code').text());
             $('#update_module').val(tr.find('.code').text());
             $('#update_version').val(tr.find('.current_version input').val());
             return false;
