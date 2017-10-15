@@ -19,7 +19,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
         <div class="col-lg-2">
             <div class="box box-success">
                 <div class="box-header">
-                    <h3 class="box-title">Теги <span id="file_path"></span></h3>
+                    <h3 class="box-title">Модули<span id="file_path"></span></h3>
                 </div>
                 <div class="box-body fluid">
                     <ul class="full_width_list" id="tag_list" data-zlist-language="rus">
