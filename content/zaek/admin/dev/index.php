@@ -1,11 +1,51 @@
 <?php
+/**
+ * @var \zaek\engine\CMain $this
+ */
 $this->template()->addCss('\jQuery.fileTree.css');
 $this->template()->addJs('\jQuery.fileTree.js');
-
-$root_dir = $this->conf()->get('repo', 'dir');
 ?>
 <section class="content">
+    <?php
+    try {
+        $root_dir = $this->conf()->get('repo', 'dir');
+    } catch ( \zaek\kernel\CException $e ) {
+        ?>
+        <p>Добавьте в конфигурацию параметр repo:dir</p>
+        <?php
+        return false;
+    }
+
+    $aNotDefined = [];
+    foreach ( [
+                  ['repo', 'dir'],
+                  ['repo', 'user_email'],
+                  ['repo', 'user_name'],
+                  ['updates', 'allow_ip'],
+              ] as $conf ) {
+        if ( !$this->conf()->isDefined($conf[0], $conf[1]) ) {
+            $aNotDefined[] = $conf;
+        }
+    }
+    ?>
     <div class="row">
+        <?php if ( count ($aNotDefined) ) { ?>
+            <div class="col-lg-12">
+                <div class="box box-danger">
+                    <div class="box-header">
+                        <h3 class="box-title">Ошибки конфигурации</h3>
+                    </div>
+                    <div class="box-body">
+                        <h5><b>Не заданы следующие параметры:</b></h5>
+                        <?php
+                        foreach ( $aNotDefined as $conf ) {
+                            echo $conf[0].':'.$conf[1] . '<br/>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
         <div class="col-lg-4">
             <div class="box box-success">
                 <div class="box-header">
@@ -19,7 +59,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
         <div class="col-lg-2">
             <div class="box box-success">
                 <div class="box-header">
-                    <h3 class="box-title">Модули<span id="file_path"></span></h3>
+                    <h3 class="box-title">Теги <span id="file_path"></span></h3>
                 </div>
                 <div class="box-body fluid">
                     <ul class="full_width_list" id="tag_list" data-zlist-language="rus">
@@ -227,7 +267,7 @@ $root_dir = $this->conf()->get('repo', 'dir');
                         <tbody>
                         <?php
                         foreach ( $aModules as $module ) {
-                            $v = exec('cd "/home/web/z/za-ek/rep_by_tag/'.$module.'" && git tag | tail -1');
+                            $v = exec('cd "'.$root_dir.$module.'" && git tag | tail -1');
                             ?>
                             <tr>
                                 <td class="name"><?=$module?></td>
