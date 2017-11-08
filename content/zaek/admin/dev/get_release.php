@@ -18,6 +18,7 @@ if( isset($_POST['module']) ) {
     $root_dir = $this->conf()->get('repo', 'dir');
 
     exec("cd {$root_dir}" . $module . '/ && git tag', $aVersion);
+    natsort($aVersion);
 
     if (!isset($_POST['version']) || $_POST['version'] == 'last') {
         $aTmp = array_slice($aVersion, -1);
