@@ -267,7 +267,7 @@ $this->template()->addJs('\jQuery.fileTree.js');
                         <tbody>
                         <?php
                         foreach ( $aModules as $module ) {
-                            $v = exec('cd "'.$root_dir.$module.'" && git tag | tail -1');
+                            $v = exec('cd "'.$root_dir.$module.'" && git tag --sort version:refname | tail -1');
                             ?>
                             <tr>
                                 <td class="name"><?=$module?></td>
